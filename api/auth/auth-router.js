@@ -30,10 +30,12 @@ router.post('/register', checkUsernameFree, checkPasswordLength, async (req, res
 router.post('/login', checkUsernameExists, async (req, res, next) => {
   try {
     const { password } = req.body;
-    if (bcrypt.compareSync(password, req.user.password)) {
-      req.session.user = req.user; // Create a session for the user
+    console.log(req.user.password)
+    if(bcrypt.compareSync(password, req.user.password)){
+      req.session.user = req.user;
       res.json({ message: `Welcome ${req.user.username}!` });
     } else {
+      console.log("bcryp thing failed")
       res.status(401).json({ message: 'Invalid credentials' });
     }
   } catch (err) {

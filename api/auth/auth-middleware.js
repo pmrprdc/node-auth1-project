@@ -1,5 +1,4 @@
 const Users = require('../users/users-model');
-
 /**
  * Checks if the user has an active session. If not, returns a 401 status.
  */
@@ -29,16 +28,23 @@ async function checkUsernameFree(req, res, next) {
  * Checks if the provided username in req.body exists in the database.
  * If it doesn't, returns a 401 status.
  */
+// In auth-middleware.js
 async function checkUsernameExists(req, res, next) {
   const { username } = req.body;
-  const users = await Users.findBy({ username });
-  if (users.length) {
-    req.user = users[0];
-    next();
-  } else {
-    res.status(401).json({ message: "Invalid credentials" });
+  try {
+    const user = await Users.findBy({username});
+    console.log(user[0])
+    if (user.length > 0) {
+      req.user = user[0];
+      next();
+    } else {
+      res.status(401).json({ message: "Invalid credentials" });
+    }
+  } catch (err) {
+    next(err);
   }
 }
+
 
 /**
  * Checks if the password in req.body is missing or shorter than 4 characters.
